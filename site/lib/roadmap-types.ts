@@ -1,4 +1,4 @@
-export type ResourceKind = "主教材" | "辅助资料" | "论文" | "代码";
+export type ResourceKind = '主教材' | '辅助资料' | '论文' | '代码';
 
 export interface Resource {
   title: string;
@@ -39,13 +39,13 @@ export interface Phase {
   weeks: [number, number];
   outcome: string;
   tone:
-    | "setup"
-    | "foundation"
-    | "model"
-    | "mir"
-    | "reduction"
-    | "product"
-    | "reflection";
+    | 'setup'
+    | 'foundation'
+    | 'model'
+    | 'mir'
+    | 'reduction'
+    | 'product'
+    | 'reflection';
 }
 
 export interface Category {
@@ -66,4 +66,11 @@ export interface ExtensionPath {
   when: string;
   focus: string[];
   result: string;
+}
+
+export interface RoadmapData {
+  phases: Phase[];
+  weeks: WeekPlan[];
+  categories: Category[];
+  extensionPaths: ExtensionPath[];
 }

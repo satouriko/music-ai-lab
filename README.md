@@ -30,7 +30,8 @@ music-ai-lab                         song2piano
 
 ```text
 music-ai-lab/
-├── roadmap/             52 周学习路线网站
+├── roadmap/             AI 可直接阅读的 52 周路线数据
+├── site/                路线与学习内容浏览网站
 ├── learning/            按知识主题组织的小型练习
 ├── notebooks/           探索、可视化和假设验证
 ├── projects/            一至三个周末完成的阶段项目
@@ -46,10 +47,21 @@ music-ai-lab/
 
 ### `roadmap/`
 
-交互式 52 周路线网站，提供“按学习内容”和“按周”两个视图。它是独立的 Node.js
-应用，有自己的 `package.json` 和 `package-lock.json`，不与根目录 Python 环境混用。
+保存 52 周学习路线的说明和结构化 JSON。这里的数据不依赖网站，人和 AI 都可以直接
+阅读与修改，是路线内容的唯一权威来源。
 
-这里放网站源码和路线数据，不放 Python 学习代码。
+### `site/`
+
+交互式学习内容网站，以 52 周路线作为唯一主入口，在每个周节点旁展示与其相关的
+笔记、Python 代码和 Notebook。它是独立的 Node.js 应用，有自己的 `package.json`
+和 `package-lock.json`，不与根目录 Python 环境混用。网站只读取根目录内容，不在
+自身目录维护路线或学习资料副本。
+
+首页 `/` 与 `/roadmap` 都直接展示完整路线；笔记、代码和 Notebook 没有脱离路线的
+总目录，只通过周节点中的学习产物进入详情。每个详情页都会显示所属周次和返回路线
+的入口。开发和构建前会从根目录生成被 Git 忽略的临时内容索引；编辑内容时始终修改
+`roadmap/`、`docs/`、`learning/`、`projects/`、`tests/` 或 `notebooks/` 中的原文件，
+并在 `roadmap/artifacts.json` 中声明它和路线的关系。
 
 ### `learning/`
 
@@ -127,10 +139,10 @@ uv sync
 `uv sync` 会根据 `pyproject.toml` 和仓库中的 `uv.lock` 创建 `.venv`。不要手工维护
 虚拟环境，也不要把 `.venv` 提交到 Git；只有依赖声明变化时才更新 `uv.lock`。
 
-路线网站独立运行：
+网站独立运行：
 
 ```bash
-cd roadmap
+cd site
 npm ci
 npm run dev
 ```
@@ -138,8 +150,9 @@ npm run dev
 完整校验：
 
 ```bash
-cd roadmap
+cd site
 npm run validate:data
+npm test
 npm run typecheck
 npm run lint
 npm run build

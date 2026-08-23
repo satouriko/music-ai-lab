@@ -1,0 +1,39 @@
+{
+  "artifacts": [
+    {
+      "id": "environment-check",
+      "kind": "code",
+      "title": "环境与可复现性检查",
+      "summary": "记录 Python、PyTorch、CUDA、cuDNN、GPU 与随机状态，建立可复现实验基线。",
+      "weeks": [1],
+      "categoryIds": ["math-ml"],
+      "root": "learning/00-environment",
+      "files": [
+        { "path": "learning/00-environment/environment_check.py", "role": "entry" },
+        { "path": "learning/00-environment/test_environment_check.py", "role": "test" }
+      ]
+    },
+    {
+      "id": "pytorch-training",
+      "kind": "code",
+      "title": "二维 PyTorch 训练闭环",
+      "summary": "用二维 XOR 数据跑通训练、验证、checkpoint 恢复和决策边界输出。",
+      "weeks": [2],
+      "categoryIds": ["math-ml"],
+      "root": "learning/01-pytorch-training",
+      "files": [
+        { "path": "learning/01-pytorch-training/train.py", "role": "entry" },
+        { "path": "learning/01-pytorch-training/test_train.py", "role": "test" }
+      ]
+    },
+    {
+      "id": "weekly-2026-w34",
+      "kind": "note",
+      "title": "PyTorch 基础、反向传播与训练工程",
+      "summary": "从环境、Tensor 和计算图进入 loss、反向传播、mini-batch 与训练工程。",
+      "weeks": [1],
+      "categoryIds": ["math-ml"],
+      "path": "docs/weekly/2026-W34.md"
+    }
+  ]
+}

@@ -28,6 +28,8 @@ dist/
 **/wandb/
 **/checkpoints/
 **/artifacts/
+!/site/app/artifacts/
+!/site/app/artifacts/**
 **/data/raw/
 **/data/interim/
 **/data/processed/

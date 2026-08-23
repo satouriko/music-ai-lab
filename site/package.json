@@ -6,17 +6,25 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
+    "generate:content": "node scripts/build-content.mjs",
+    "test": "npm run generate:content && node --import tsx --test lib/*.test.ts scripts/*.test.mjs",
+    "dev": "npm run generate:content && vinext dev",
+    "build": "npm run generate:content && vinext build",
     "start": "vinext start",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "typecheck": "tsc --noEmit",
+    "lint": "npm run generate:content && eslint . --ignore-pattern dist --ignore-pattern .next",
+    "typecheck": "npm run generate:content && tsc --noEmit",
     "validate:data": "node scripts/validate-roadmap.mjs"
   },
   "dependencies": {
+    "katex": "0.16.47",
     "next": "16.3.2",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "shiki": "^4.4.3"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
@@ -32,6 +40,7 @@
     "eslint-config-next": "16.3.2",
     "react-server-dom-webpack": "19.2.6",
     "tailwindcss": "4.2.1",
+    "tsx": "^4.23.12",
     "typescript": "5.9.3",
     "vinext": "1.0.0-beta.3",
     "vite": "8.0.13",
