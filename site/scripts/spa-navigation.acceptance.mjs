@@ -49,6 +49,7 @@ async function run() {
   let nextId = 0;
   const pending = new Map();
   const exceptions = [];
+  const navigationRequests = [];
 
   socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data);
@@ -65,6 +66,16 @@ async function run() {
         message.params.exceptionDetails.exception?.description
           ?? message.params.exceptionDetails.text,
       );
+    }
+    if (message.method === 'Network.responseReceived') {
+      const { response } = message.params;
+      if (response.url.startsWith(baseUrl)) {
+        navigationRequests.push({
+          mimeType: response.mimeType,
+          status: response.status,
+          url: response.url,
+        });
+      }
     }
   });
 
@@ -141,9 +152,35 @@ async function run() {
     assert.equal(
       await evaluate('window.__MUSIC_AI_SPA_MARKER__'),
       marker,
-      `${testCase.name} replaced the document instead of using SPA navigation`,
+      `${testCase.name} replaced the document instead of using SPA navigation:\n${JSON.stringify(navigationRequests, null, 2)}`,
     );
   }
+
+  const testFilePath = '/code/learning/00-environment/test_environment_check.py';
+  const testFileSelector = `a[href="${testFilePath}"]`;
+  await call('Page.navigate', {
+    url: new URL('/artifacts/environment-check', baseUrl).href,
+  });
+  await waitFor(
+    `document.readyState === 'complete' && Boolean(document.querySelector(${JSON.stringify(testFileSelector)}))`,
+    'exercise test-file link did not render as a static code route',
+  );
+  const codeMarker = `spa-code-${Date.now()}`;
+  await evaluate(`window.__MUSIC_AI_SPA_MARKER__ = ${JSON.stringify(codeMarker)}`);
+  await evaluate(`document.querySelector(${JSON.stringify(testFileSelector)}).click()`);
+  await waitFor(
+    `location.pathname === ${JSON.stringify(testFilePath)} && Boolean(document.querySelector('.artifact-file-index'))`,
+    'test file did not navigate while preserving the exercise directory',
+  );
+  assert.equal(
+    await evaluate('window.__MUSIC_AI_SPA_MARKER__'),
+    codeMarker,
+    'test file replaced the document instead of using SPA navigation',
+  );
+  assert.equal(
+    await evaluate(`document.querySelector('.artifact-entry-code header code')?.textContent`),
+    'learning/00-environment/test_environment_check.py',
+  );
 
   await call('Page.navigate', { url: new URL('/', baseUrl).href });
   await waitFor(
@@ -160,7 +197,7 @@ async function run() {
   assert.deepEqual(exceptions, [], `browser exceptions: ${exceptions.join('\n')}`);
 
   socket.close();
-  process.stdout.write('SPA navigation acceptance passed: note, exercise, and phase controls.\n');
+  process.stdout.write('SPA navigation acceptance passed: note, exercise, code file, and phase controls.\n');
 }
 
 try {

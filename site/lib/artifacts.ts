@@ -10,9 +10,12 @@ export function artifactHref(id: string) {
   return `/artifacts/${encodeURIComponent(id)}`;
 }
 
-export function artifactFileHref(id: string, path: string) {
-  const query = new URLSearchParams({ file: path });
-  return `${artifactHref(id)}?${query.toString()}`;
+export function artifactFileHref(path: string) {
+  const encodedPath = path
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `/code/${encodedPath}`;
 }
 
 export function roadmapWeekHref(week: number) {

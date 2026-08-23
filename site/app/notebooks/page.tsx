@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { RoadmapRedirect } from '@/components/roadmap-redirect';
 
 export default function NotebooksPage() {
-  redirect('/#roadmap');
+  return <RoadmapRedirect />;
 }

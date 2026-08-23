@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { CodeViewer } from '@/components/code-viewer';
 import type { CodeArtifact as CodeArtifactData } from '@/lib/artifact-types';
 import type { ArtifactPresentation } from '@/lib/artifact-presentation';
-import { artifactFileHref, artifactHref } from '@/lib/artifacts';
+import { artifactFileHref } from '@/lib/artifacts';
 
 const roleLabels = {
   entry: '入口',
@@ -37,9 +37,7 @@ export function CodeArtifact({
                 <strong>{document.title}</strong>
               ) : (
                 <Link
-                  href={role === 'entry'
-                    ? artifactHref(artifact.id)
-                    : artifactFileHref(artifact.id, document.path)}
+                  href={artifactFileHref(document.path)}
                 >
                   {document.title}
                 </Link>

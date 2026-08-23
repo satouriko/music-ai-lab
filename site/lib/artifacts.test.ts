@@ -69,8 +69,8 @@ test('artifactForContentPathFrom finds exact note and code ownership', () => {
 test('artifact and roadmap links use stable encoded routes', () => {
   assert.equal(artifactHref('weekly note'), '/artifacts/weekly%20note');
   assert.equal(
-    artifactFileHref('environment-check', 'learning/environment/test_main.py'),
-    '/artifacts/environment-check?file=learning%2Fenvironment%2Ftest_main.py',
+    artifactFileHref('learning/environment/test_main.py'),
+    '/code/learning/environment/test_main.py',
   );
   assert.equal(roadmapWeekHref(4), '/#week-4');
 });

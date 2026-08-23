@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import { RoadmapRedirect } from '@/components/roadmap-redirect';
 
 export default function CodePage() {
-  redirect('/#roadmap');
+  return <RoadmapRedirect />;
 }

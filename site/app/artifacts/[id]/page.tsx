@@ -13,7 +13,6 @@ import { detailMetadata } from '@/lib/detail-metadata';
 
 interface ArtifactPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ file?: string | string[] }>;
 }
 
 export function generateStaticParams() {
@@ -36,10 +35,8 @@ export async function generateMetadata({
 
 export default async function ArtifactPage({
   params,
-  searchParams,
 }: ArtifactPageProps) {
   const { id } = await params;
-  const { file } = await searchParams;
   const artifact = findArtifact(id);
   const presentation = artifactPresentation(artifact, content);
   if (!artifact || !presentation) notFound();
@@ -69,7 +66,6 @@ export default async function ArtifactPage({
         <CodeArtifact
           artifact={artifact as CodeArtifactData}
           presentation={presentation}
-          selectedPath={typeof file === 'string' ? file : undefined}
         />
       )}
       {presentation.kind === 'notebook' && (

@@ -9,6 +9,7 @@
     "generate:content": "node scripts/build-content.mjs",
     "test": "npm run generate:content && node --import tsx --test lib/*.test.ts scripts/*.test.mjs",
     "test:spa": "node scripts/spa-navigation.acceptance.mjs",
+    "test:static": "node scripts/static-export.acceptance.mjs",
     "dev": "npm run generate:content && vinext dev",
     "build": "npm run generate:content && vinext build",
     "start": "vinext start",
