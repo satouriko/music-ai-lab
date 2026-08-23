@@ -3,7 +3,7 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const clientRoot = fileURLToPath(new URL('../dist/client/', import.meta.url));
-const DOCUMENT_SUFFIX = '.document.html';
+const DOCUMENT_SUFFIX = '.document';
 
 async function collectHtmlDocuments(directory) {
   const documents = [];

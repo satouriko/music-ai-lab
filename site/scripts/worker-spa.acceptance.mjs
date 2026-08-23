@@ -60,6 +60,17 @@ async function runBrowserAcceptance(baseUrl) {
   assert.equal(exitCode, 0, 'SPA acceptance failed against the built Worker');
 }
 
+async function assertDocumentDispatch(baseUrl) {
+  const response = await fetch(baseUrl, { redirect: 'manual' });
+  assert.equal(response.status, 200, 'root document must not redirect to an internal asset');
+  assert.match(
+    response.headers.get('content-type') ?? '',
+    /^text\/html\b/,
+    'root document must retain its HTML content type',
+  );
+  assert.equal(response.headers.get('location'), null);
+}
+
 await access(workerConfig);
 const port = await reservePort();
 const baseUrl = `http://127.0.0.1:${port}`;
@@ -86,6 +97,7 @@ for (const stream of [worker.stdout, worker.stderr]) {
 
 try {
   await waitForWorker(baseUrl, worker, () => workerOutput);
+  await assertDocumentDispatch(baseUrl);
   await runBrowserAcceptance(baseUrl);
   process.stdout.write('Worker SPA acceptance passed: cached RSC requests preserve navigation.\n');
 } finally {

@@ -9,6 +9,7 @@ const clientRoot = fileURLToPath(new URL('../dist/client/', import.meta.url));
 
 const contentTypes = {
   '.css': 'text/css; charset=utf-8',
+  '.document': 'text/html; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
@@ -22,7 +23,7 @@ const contentTypes = {
 
 function routeCandidates(pathname) {
   const relative = pathname === '/' ? 'index' : pathname.replace(/^\/+|\/+$/g, '');
-  return [`${relative}.document.html`, join(relative, 'index.document.html')];
+  return [`${relative}.document`, join(relative, 'index.document')];
 }
 
 function publicHtmlCandidates(pathname) {

@@ -7,6 +7,7 @@ interface WorkerEnv {
 const RSC_HEADER = 'RSC';
 const RSC_SEARCH_PARAM = '_rsc';
 const RSC_CONTENT_TYPE = 'text/x-component';
+const DOCUMENT_CONTENT_TYPE = 'text/html; charset=utf-8';
 const RSC_COMPATIBILITY_HEADER = 'X-Vinext-RSC-Compatibility-Id';
 const RSC_COMPATIBILITY_ID = process.env.__VINEXT_RSC_COMPATIBILITY_ID;
 
@@ -16,8 +17,8 @@ function toStaticRscPathname(pathname: string) {
 }
 
 function toStaticDocumentPathname(pathname: string) {
-  if (pathname === '/') return '/index.document.html';
-  return `${pathname.replace(/\/$/, '')}.document.html`;
+  if (pathname === '/') return '/index.document';
+  return `${pathname.replace(/\/$/, '')}.document`;
 }
 
 function withRscHeaders(response: Response) {
@@ -26,6 +27,16 @@ function withRscHeaders(response: Response) {
   if (RSC_COMPATIBILITY_ID) {
     headers.set(RSC_COMPATIBILITY_HEADER, RSC_COMPATIBILITY_ID);
   }
+  return new Response(response.body, {
+    headers,
+    status: response.status,
+    statusText: response.statusText,
+  });
+}
+
+function withDocumentHeaders(response: Response) {
+  const headers = new Headers(response.headers);
+  headers.set('Content-Type', DOCUMENT_CONTENT_TYPE);
   return new Response(response.body, {
     headers,
     status: response.status,
@@ -53,7 +64,7 @@ const worker = {
       url.pathname = toStaticDocumentPathname(url.pathname);
       url.search = '';
       const response = await env.ASSETS.fetch(new Request(url, request));
-      if (response.status !== 404) return response;
+      if (response.status !== 404) return withDocumentHeaders(response);
     }
 
     return env.ASSETS.fetch(request);
