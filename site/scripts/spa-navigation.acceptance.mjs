@@ -1,0 +1,172 @@
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const baseUrl = process.env.SITE_URL ?? 'http://127.0.0.1:3000';
+const chromeBinary = process.env.CHROME_BIN ?? '/usr/bin/google-chrome';
+const profile = mkdtempSync(join(tmpdir(), 'music-ai-spa-navigation-'));
+const chrome = spawn(chromeBinary, [
+  '--headless=new',
+  '--no-sandbox',
+  '--disable-gpu',
+  '--remote-debugging-port=0',
+  `--user-data-dir=${profile}`,
+  '--window-size=1440,1000',
+  'about:blank',
+], { stdio: 'ignore' });
+
+const pause = (milliseconds) => new Promise((resolve) => {
+  setTimeout(resolve, milliseconds);
+});
+
+async function waitForActivePort() {
+  const activePortPath = join(profile, 'DevToolsActivePort');
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    try {
+      return readFileSync(activePortPath, 'utf8').trim().split('\n')[0];
+    } catch {
+      await pause(50);
+    }
+  }
+  throw new Error('Chrome DevTools port did not become ready');
+}
+
+async function run() {
+  const port = await waitForActivePort();
+  const targets = await fetch(`http://127.0.0.1:${port}/json/list`)
+    .then((response) => response.json());
+  const page = targets.find((target) => target.type === 'page');
+  assert.ok(page, 'Chrome did not expose a page target');
+
+  const socket = new WebSocket(page.webSocketDebuggerUrl);
+  await new Promise((resolve, reject) => {
+    socket.addEventListener('open', resolve, { once: true });
+    socket.addEventListener('error', reject, { once: true });
+  });
+
+  let nextId = 0;
+  const pending = new Map();
+  const exceptions = [];
+
+  socket.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+    if (message.id) {
+      const request = pending.get(message.id);
+      if (!request) return;
+      pending.delete(message.id);
+      if (message.error) request.reject(new Error(message.error.message));
+      else request.resolve(message.result);
+      return;
+    }
+    if (message.method === 'Runtime.exceptionThrown') {
+      exceptions.push(
+        message.params.exceptionDetails.exception?.description
+          ?? message.params.exceptionDetails.text,
+      );
+    }
+  });
+
+  function call(method, params = {}) {
+    nextId += 1;
+    return new Promise((resolve, reject) => {
+      pending.set(nextId, { resolve, reject });
+      socket.send(JSON.stringify({ id: nextId, method, params }));
+    });
+  }
+
+  async function evaluate(expression) {
+    const result = await call('Runtime.evaluate', {
+      expression,
+      awaitPromise: true,
+      returnByValue: true,
+    });
+    if (result.exceptionDetails) {
+      throw new Error(
+        result.exceptionDetails.exception?.description
+          ?? result.exceptionDetails.text,
+      );
+    }
+    return result.result.value;
+  }
+
+  async function waitFor(expression, message) {
+    for (let attempt = 0; attempt < 120; attempt += 1) {
+      if (await evaluate(expression)) return;
+      await pause(100);
+    }
+    throw new Error(message);
+  }
+
+  await call('Page.enable');
+  await call('Runtime.enable');
+  await call('Network.enable');
+  if (process.env.SITE_AUTHORIZATION) {
+    await call('Network.setExtraHTTPHeaders', {
+      headers: {
+        'OAI-Sites-Authorization': process.env.SITE_AUTHORIZATION,
+      },
+    });
+  }
+
+  const cases = [
+    {
+      name: 'note',
+      selector: 'a[href="/artifacts/weekly-2026-w34"]',
+      pathname: '/artifacts/weekly-2026-w34',
+    },
+    {
+      name: 'exercise',
+      selector: 'a[href="/artifacts/environment-check"]',
+      pathname: '/artifacts/environment-check',
+    },
+  ];
+
+  for (const testCase of cases) {
+    await call('Page.navigate', { url: new URL('/', baseUrl).href });
+    await waitFor(
+      `document.readyState === 'complete' && Boolean(document.querySelector(${JSON.stringify(testCase.selector)}))`,
+      `${testCase.name} link did not render`,
+    );
+
+    const marker = `spa-${testCase.name}-${Date.now()}`;
+    await evaluate(`window.__MUSIC_AI_SPA_MARKER__ = ${JSON.stringify(marker)}`);
+    await evaluate(`document.querySelector(${JSON.stringify(testCase.selector)}).click()`);
+    await waitFor(
+      `location.pathname === ${JSON.stringify(testCase.pathname)} && Boolean(document.querySelector('.artifact-page'))`,
+      `${testCase.name} did not navigate to its artifact page`,
+    );
+
+    assert.equal(
+      await evaluate('window.__MUSIC_AI_SPA_MARKER__'),
+      marker,
+      `${testCase.name} replaced the document instead of using SPA navigation`,
+    );
+  }
+
+  await call('Page.navigate', { url: new URL('/', baseUrl).href });
+  await waitFor(
+    "document.readyState === 'complete' && Boolean(document.querySelector('.phase-filter'))",
+    'roadmap phase filter did not render',
+  );
+  assert.deepEqual(
+    await evaluate(`({
+      duplicatePhaseJumps: document.querySelectorAll('.phase-jumps').length,
+      phaseFilters: document.querySelectorAll('.phase-filter').length,
+    })`),
+    { duplicatePhaseJumps: 0, phaseFilters: 1 },
+  );
+  assert.deepEqual(exceptions, [], `browser exceptions: ${exceptions.join('\n')}`);
+
+  socket.close();
+  process.stdout.write('SPA navigation acceptance passed: note, exercise, and phase controls.\n');
+}
+
+try {
+  await run();
+} finally {
+  chrome.kill('SIGTERM');
+  await pause(150);
+  rmSync(profile, { recursive: true, force: true });
+}

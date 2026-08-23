@@ -352,24 +352,6 @@ export function RoadmapClient({
         </dl>
       </section>
 
-      <nav className="phase-jumps" aria-label="年度阶段">
-        {phases.map((phase, index) => (
-          <button
-            key={phase.id}
-            type="button"
-            onClick={() => {
-              setSelectedPhase(phase.id);
-              setView('weeks');
-              document.getElementById('roadmap')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            <span>{padWeek(index + 1)}</span>
-            <strong>{phase.name}</strong>
-            <small>W{padWeek(phase.weeks[0])}—W{padWeek(phase.weeks[1])}</small>
-          </button>
-        ))}
-      </nav>
-
       <section className="roadmap-shell" id="roadmap">
         <header className="roadmap-heading">
           <div>
