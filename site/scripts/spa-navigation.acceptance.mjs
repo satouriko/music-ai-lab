@@ -116,6 +116,16 @@ async function run() {
     throw new Error(message);
   }
 
+  async function waitForHydratedLink(selector, name) {
+    await waitFor(
+      `(() => {
+        const link = document.querySelector(${JSON.stringify(selector)});
+        return Boolean(link && Object.keys(link).some((key) => key.startsWith('__reactProps$')));
+      })()`,
+      `${name} link did not hydrate`,
+    );
+  }
+
   await call('Page.enable');
   await call('Runtime.enable');
   await call('Network.enable');
@@ -146,6 +156,7 @@ async function run() {
       `document.readyState === 'complete' && Boolean(document.querySelector(${JSON.stringify(testCase.selector)}))`,
       `${testCase.name} link did not render`,
     );
+    await waitForHydratedLink(testCase.selector, testCase.name);
 
     const marker = `spa-${testCase.name}-${Date.now()}`;
     await evaluate(`window.__MUSIC_AI_SPA_MARKER__ = ${JSON.stringify(marker)}`);
@@ -158,7 +169,7 @@ async function run() {
     assert.equal(
       await evaluate('window.__MUSIC_AI_SPA_MARKER__'),
       marker,
-      `${testCase.name} replaced the document instead of using SPA navigation:\n${JSON.stringify(navigationRequests, null, 2)}`,
+      `${testCase.name} replaced the document instead of using SPA navigation:\n${JSON.stringify({ consoleMessages, exceptions, navigationRequests }, null, 2)}`,
     );
   }
 
@@ -171,6 +182,7 @@ async function run() {
     `document.readyState === 'complete' && Boolean(document.querySelector(${JSON.stringify(testFileSelector)}))`,
     'exercise test-file link did not render as a static code route',
   );
+  await waitForHydratedLink(testFileSelector, 'exercise test-file');
   const codeMarker = `spa-code-${Date.now()}`;
   await evaluate(`window.__MUSIC_AI_SPA_MARKER__ = ${JSON.stringify(codeMarker)}`);
   await evaluate(`document.querySelector(${JSON.stringify(testFileSelector)}).click()`);
