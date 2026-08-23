@@ -49,6 +49,7 @@ async function run() {
   let nextId = 0;
   const pending = new Map();
   const exceptions = [];
+  const consoleMessages = [];
   const navigationRequests = [];
 
   socket.addEventListener('message', (event) => {
@@ -66,6 +67,11 @@ async function run() {
         message.params.exceptionDetails.exception?.description
           ?? message.params.exceptionDetails.text,
       );
+    }
+    if (message.method === 'Runtime.consoleAPICalled') {
+      consoleMessages.push(message.params.args.map((argument) => (
+        argument.value ?? argument.description ?? ''
+      )).join(' '));
     }
     if (message.method === 'Network.responseReceived') {
       const { response } = message.params;
@@ -175,7 +181,7 @@ async function run() {
   assert.equal(
     await evaluate('window.__MUSIC_AI_SPA_MARKER__'),
     codeMarker,
-    'test file replaced the document instead of using SPA navigation',
+    `test file replaced the document instead of using SPA navigation:\n${JSON.stringify({ consoleMessages, navigationRequests }, null, 2)}`,
   );
   assert.equal(
     await evaluate(`document.querySelector('.artifact-entry-code header code')?.textContent`),
