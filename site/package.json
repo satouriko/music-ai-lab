@@ -11,7 +11,7 @@
     "test:spa": "node scripts/spa-navigation.acceptance.mjs",
     "test:static": "node scripts/static-export.acceptance.mjs && node scripts/worker-spa.acceptance.mjs",
     "dev": "npm run generate:content && vinext dev",
-    "build": "npm run generate:content && vinext build",
+    "build": "npm run generate:content && vinext build && node scripts/prepare-sites-assets.mjs",
     "start": "vinext start",
     "lint": "npm run generate:content && eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "npm run generate:content && tsc --noEmit",

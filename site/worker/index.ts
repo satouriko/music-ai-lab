@@ -15,6 +15,11 @@ function toStaticRscPathname(pathname: string) {
   return `${pathname.replace(/\/$/, '')}.rsc`;
 }
 
+function toStaticDocumentPathname(pathname: string) {
+  if (pathname === '/') return '/index.document.html';
+  return `${pathname.replace(/\/$/, '')}.document.html`;
+}
+
 function withRscHeaders(response: Response) {
   const headers = new Headers(response.headers);
   headers.set('Content-Type', RSC_CONTENT_TYPE);
@@ -42,6 +47,13 @@ const worker = {
       url.search = '';
       const response = await env.ASSETS.fetch(new Request(url, request));
       if (response.status !== 404) return withRscHeaders(response);
+    }
+
+    if ((request.method === 'GET' || request.method === 'HEAD') && !isRscRequest) {
+      url.pathname = toStaticDocumentPathname(url.pathname);
+      url.search = '';
+      const response = await env.ASSETS.fetch(new Request(url, request));
+      if (response.status !== 404) return response;
     }
 
     return env.ASSETS.fetch(request);

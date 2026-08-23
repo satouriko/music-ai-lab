@@ -21,8 +21,13 @@ const contentTypes = {
 };
 
 function routeCandidates(pathname) {
-  const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\/+/, '');
-  return [relative, `${relative}.html`, join(relative, 'index.html')];
+  const relative = pathname === '/' ? 'index' : pathname.replace(/^\/+|\/+$/g, '');
+  return [`${relative}.document.html`, join(relative, 'index.document.html')];
+}
+
+function publicHtmlCandidates(pathname) {
+  const relative = pathname === '/' ? 'index' : pathname.replace(/^\/+|\/+$/g, '');
+  return [`${relative}.html`, join(relative, 'index.html')];
 }
 
 async function firstFile(candidates) {
@@ -40,7 +45,12 @@ async function firstFile(candidates) {
 
 async function assertPrerendered(pathname) {
   const page = await firstFile(routeCandidates(pathname));
-  assert.ok(page, `${pathname} was not emitted as static HTML`);
+  assert.ok(page, `${pathname} was not emitted as an internal static document`);
+  assert.equal(
+    await firstFile(publicHtmlCandidates(pathname)),
+    undefined,
+    `${pathname} still exposes HTML that can bypass the Worker`,
+  );
   const html = await readFile(page, 'utf8');
   assert.match(html, /<html/i, `${pathname} does not contain a prerendered document`);
 }
@@ -91,7 +101,7 @@ const server = createServer(async (request, response) => {
     const pathname = decodeURIComponent(requestUrl.pathname);
     const candidates = requestUrl.searchParams.has('_rsc')
       ? [`${pathname === '/' ? 'index' : pathname.replace(/^\/+/, '')}.rsc`]
-      : routeCandidates(pathname);
+      : [pathname.replace(/^\/+/, ''), ...routeCandidates(pathname)];
     const file = await firstFile(candidates);
     if (!file) {
       response.writeHead(404).end('Not found');

@@ -9,15 +9,6 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
 
 const { d1, r2 } = hostingConfig;
 
-const staticPageRoutes = [
-  '/',
-  '/roadmap*',
-  '/notes*',
-  '/code*',
-  '/notebooks*',
-  '/artifacts*',
-];
-
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === 'seatbelt';
 
@@ -27,7 +18,6 @@ const localBindingConfig = {
   assets: {
     binding: 'ASSETS',
     not_found_handling: 'none' as const,
-    run_worker_first: staticPageRoutes,
   },
   d1_databases: d1
     ? [
