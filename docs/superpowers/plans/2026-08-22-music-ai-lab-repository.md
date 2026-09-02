@@ -13,8 +13,8 @@
 ## Global Constraints
 
 - Work only in `/home/jiahao/workspace/music-ai-lab`.
-- Preserve the existing roadmap checkout and deployed site unchanged; edits are
-  made only in this repository's imported copy.
+- Preserve the existing roadmap checkout unchanged; edits are made only in this
+  repository's imported copy.
 - Import only files tracked at roadmap commit `88e193e`.
 - During the initial scaffold, install uv only for the current WSL user and do
   not use a system-wide package installation, create a remote, commit, or push.
@@ -49,9 +49,8 @@
 - Produces: an independently installable and buildable website under `roadmap/`
 
 - [x] Export tracked files with `git archive 88e193e` into `roadmap/`.
-- [x] Verify that `roadmap/.git`, `node_modules`, `.next`, `dist`, and `.wrangler` are absent.
-- [x] Verify that `roadmap/.openai/hosting.json`, `package.json`, and
-      `package-lock.json` are present.
+- [x] Verify that `roadmap/.git`, `node_modules`, `.next`, and `dist` are absent.
+- [x] Verify that `roadmap/package.json` and `roadmap/package-lock.json` are present.
 
 ### Task 3: Create the learning repository skeleton
 

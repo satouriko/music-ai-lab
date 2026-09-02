@@ -65,10 +65,9 @@ are content and may establish a directory before its first exercise.
 
 The initial import uses only files tracked by the existing roadmap repository at
 commit `88e193e`. It excludes that checkout's `.git` directory, dependency
-installation, build output, framework caches, and Wrangler state. After import,
-the copy in this repository evolves independently. Keep `.openai/hosting.json`
-so it retains its Sites identity, but do not republish the current deployment
-without an explicit publishing request.
+installation, build output, and framework caches. After import, the copy in this
+repository evolves independently. The website is exported as static files and
+published from this repository by GitHub Pages.
 
 ## Initial completion criteria
 

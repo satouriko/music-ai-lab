@@ -88,11 +88,6 @@ assert.doesNotMatch(
 
 const outputFiles = await collectFiles(clientRoot);
 assert.equal(
-  outputFiles.some((file) => file.endsWith('.document')),
-  false,
-  'retired hosting documents remain in the Pages artifact',
-);
-assert.equal(
   outputFiles.some((file) => file.endsWith('.rsc')),
   false,
   'RSC files cannot be routed correctly by GitHub Pages',

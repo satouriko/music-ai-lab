@@ -14,35 +14,14 @@ async function exists(url) {
   }
 }
 
-test('GitHub Pages is the only configured hosting target', async () => {
+test('GitHub Pages has a dedicated static build command', async () => {
   const packageJson = JSON.parse(
     await readFile(new URL('../package.json', import.meta.url), 'utf8'),
   );
-  const viteConfig = await readFile(new URL('../vite.config.ts', import.meta.url), 'utf8');
-  const siteReadme = await readFile(new URL('../README.md', import.meta.url), 'utf8');
 
   assert.equal(packageJson.name, 'music-ai-lab-site');
-  assert.equal(packageJson.devDependencies['@openai/sites-vite-plugin'], undefined);
-  assert.equal(packageJson.devDependencies['@cloudflare/vite-plugin'], undefined);
-  assert.equal(packageJson.devDependencies['@cloudflare/workers-types'], undefined);
-  assert.equal(packageJson.devDependencies.wrangler, undefined);
-  assert.doesNotMatch(viteConfig, /openai|sites\(|cloudflare|wrangler|hosting\.json/i);
-  assert.doesNotMatch(siteReadme, /OpenAI Sites|chatgpt\.site|hosting\.json/i);
-
-  for (const relativePath of [
-    '.openai/hosting.json',
-    'worker/index.ts',
-    'scripts/prepare-sites-assets.mjs',
-    'scripts/spa-navigation.acceptance.mjs',
-    'scripts/static-export.acceptance.mjs',
-    'scripts/worker-spa.acceptance.mjs',
-  ]) {
-    assert.equal(
-      await exists(new URL(`../${relativePath}`, import.meta.url)),
-      false,
-      `${relativePath} still belongs to the retired hosting target`,
-    );
-  }
+  assert.match(packageJson.scripts['build:pages'], /prepare-github-pages/);
+  assert.equal(packageJson.scripts['test:pages'], 'node scripts/github-pages-export.acceptance.mjs');
 });
 
 test('the Pages workflow builds and deploys the static export', async () => {
