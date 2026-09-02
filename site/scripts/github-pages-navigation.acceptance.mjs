@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
+import { waitForActivePort } from './chrome-devtools.mjs';
 
 const baseUrl = process.env.SITE_URL;
 assert.ok(baseUrl, 'SITE_URL is required');
@@ -23,20 +25,8 @@ const pause = (milliseconds) => new Promise((resolve) => {
   setTimeout(resolve, milliseconds);
 });
 
-async function waitForActivePort() {
-  const activePortPath = join(profile, 'DevToolsActivePort');
-  for (let attempt = 0; attempt < 120; attempt += 1) {
-    try {
-      return readFileSync(activePortPath, 'utf8').trim().split('\n')[0];
-    } catch {
-      await pause(50);
-    }
-  }
-  throw new Error('Chrome DevTools port did not become ready');
-}
-
 async function run() {
-  const port = await waitForActivePort();
+  const port = await waitForActivePort(join(profile, 'DevToolsActivePort'));
   const targets = await fetch(`http://127.0.0.1:${port}/json/list`)
     .then((response) => response.json());
   const page = targets.find((target) => target.type === 'page');
