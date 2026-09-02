@@ -27,6 +27,19 @@
       ]
     },
     {
+      "id": "midi-analysis",
+      "kind": "code",
+      "title": "CLP-835 MIDI 解析与演奏比较",
+      "summary": "解析音符、时间、力度和踏板事件，并比较同曲两次演奏的连续性。",
+      "weeks": [2],
+      "categoryIds": ["symbolic-project", "music-piano"],
+      "root": "learning/02-midi-analysis",
+      "files": [
+        { "path": "learning/02-midi-analysis/analyze_midi.py", "role": "entry" },
+        { "path": "learning/02-midi-analysis/test_analyze_midi.py", "role": "test" }
+      ]
+    },
+    {
       "id": "weekly-2026-w34",
       "kind": "note",
       "title": "PyTorch 基础、反向传播与训练工程",
@@ -34,6 +47,15 @@
       "weeks": [1],
       "categoryIds": ["math-ml"],
       "path": "docs/weekly/2026-W34.md"
+    },
+    {
+      "id": "weekly-2026-w36",
+      "kind": "note",
+      "title": "MIDI 时间、触键数据与通用控制协议",
+      "summary": "从 CLP-835 自录数据理解 PPQ、tempo、触键力度、踏板控制和通用 MIDI 事件。",
+      "weeks": [2],
+      "categoryIds": ["symbolic-project", "music-piano"],
+      "path": "docs/weekly/2026-W36.md"
     }
   ]
 }

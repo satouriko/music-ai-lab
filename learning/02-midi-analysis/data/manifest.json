@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "description": "使用 Yamaha CLP-835 自行录制的钢琴 MIDI 学习样本。",
+  "recordings": [
+    {
+      "id": "note-pedal-test",
+      "file": "samples/note-pedal-test.mid",
+      "original_file": "USERSONG001.MID",
+      "piece": "五音与踏板测试",
+      "take": "测试",
+      "source_device": "Yamaha CLP-835",
+      "size_bytes": 901,
+      "sha256": "430cb2e920c638c9a8f13277576ba5de9927c535858d8cbc4c93b159e5353859"
+    },
+    {
+      "id": "beyer-059-broken",
+      "file": "samples/beyer-059-broken.mid",
+      "original_file": "USERSONG002.MID",
+      "piece": "拜厄 59",
+      "take": "弹崩版本",
+      "source_device": "Yamaha CLP-835",
+      "size_bytes": 3996,
+      "sha256": "960e6253812f2cad28360912fc4e063505039b030516e7799136b7b14b93aa5c"
+    },
+    {
+      "id": "beyer-059-clean",
+      "file": "samples/beyer-059-clean.mid",
+      "original_file": "USERSONG003.MID",
+      "piece": "拜厄 59",
+      "take": "较完整版本",
+      "source_device": "Yamaha CLP-835",
+      "size_bytes": 3683,
+      "sha256": "dcd4acaad5533772df78235a70744d8c4aded215e81c28cb552eb3a4bfa04240"
+    },
+    {
+      "id": "beyer-061",
+      "file": "samples/beyer-061.mid",
+      "original_file": "USERSONG004.MID",
+      "piece": "拜厄 61",
+      "take": "演奏版本",
+      "source_device": "Yamaha CLP-835",
+      "size_bytes": 2916,
+      "sha256": "22fe5dcdce8517c9c638fc2b8149f2060bef31afaedc38a28f5bb759b1321d74"
+    },
+    {
+      "id": "doll-and-bear-dance",
+      "file": "samples/doll-and-bear-dance.mid",
+      "original_file": "USERSONG005.MID",
+      "piece": "洋娃娃和小熊跳舞",
+      "take": "演奏版本",
+      "source_device": "Yamaha CLP-835",
+      "size_bytes": 3302,
+      "sha256": "8f8a79495c93b3a024359148b86bc4ba29722f949a51cb9e229e1a0473ac407d"
+    }
+  ]
+}

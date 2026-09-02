@@ -52,18 +52,21 @@ assert.equal(
 
 const rootHtml = await assertPage('/');
 let detailHtml;
+let week36Html;
 for (const pathname of [
   '/roadmap',
   '/notes',
   '/code',
   '/notebooks',
   '/artifacts/weekly-2026-w34',
+  '/artifacts/weekly-2026-w36',
   '/artifacts/environment-check',
   '/code/learning/00-environment/test_environment_check.py',
   '/notes/docs/weekly/2026-W34.md',
 ]) {
   const html = await assertPage(pathname);
   if (pathname === '/artifacts/weekly-2026-w34') detailHtml = html;
+  if (pathname === '/artifacts/weekly-2026-w36') week36Html = html;
 }
 
 assert.match(rootHtml, /(?:href|src)="\/music-ai-lab\/_next\//);
@@ -76,6 +79,11 @@ assert.match(
   detailHtml,
   /https:\/\/satouriko\.github\.io\/music-ai-lab\/music-ai-roadmap-og\.png/,
   'detail metadata must keep the Pages base path in social image URLs',
+);
+assert.doesNotMatch(
+  week36Html,
+  /unresolved-link/,
+  'the W36 note contains links that are unavailable on GitHub Pages',
 );
 
 const outputFiles = await collectFiles(clientRoot);

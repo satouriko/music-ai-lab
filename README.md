@@ -124,7 +124,8 @@ music-ai-lab/
 | 第三方源码阅读结论 | `docs/code-reading/` |
 | 周目标、周复盘、乐理和钢琴记录 | `docs/weekly/` |
 | Song2Piano 个人兴趣项目 | 独立 `song2piano` 仓库 |
-| 原始数据、完整 checkpoint、训练日志 | Hugging Face / DagsHub，不进 Git |
+| 少量自录或可再分发测试样本 | 对应练习的 `data/samples/`，进入 Git |
+| 大型或受限原始数据、完整 checkpoint、训练日志 | Hugging Face / DagsHub，不进 Git |
 
 ## 环境
 
