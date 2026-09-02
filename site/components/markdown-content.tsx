@@ -5,6 +5,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
+import Link from 'next/link';
 import { MarkdownAsync } from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -119,7 +120,7 @@ export async function MarkdownContent({
               );
             }
             if (resolved.startsWith('/')) {
-              return <a href={resolved}>{children}</a>;
+              return <Link href={resolved}>{children}</Link>;
             }
             if (/^https?:/i.test(resolved)) {
               return (

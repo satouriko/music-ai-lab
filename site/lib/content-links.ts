@@ -12,7 +12,7 @@ const routeByKind: Record<ContentKind, string> = {
 export function contentHref(
   kind: ContentKind,
   repositoryPath: string,
-  basePath?: string,
+  basePath = '',
 ) {
   const encodedPath = repositoryPath
     .split('/')

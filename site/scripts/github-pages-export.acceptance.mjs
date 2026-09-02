@@ -15,6 +15,7 @@ const contentTypes = {
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.txt': 'text/plain; charset=utf-8',
   '.ttf': 'font/ttf',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
@@ -70,7 +71,8 @@ for (const pathname of [
 }
 
 assert.match(rootHtml, /(?:href|src)="\/music-ai-lab\/_next\//);
-assert.match(rootHtml, /href="\/music-ai-lab\/artifacts\/weekly-2026-w34\/"/);
+assert.match(rootHtml, /href="\/music-ai-lab\/artifacts\/weekly-2026-w34"/);
+assert.doesNotMatch(rootHtml, /href="[^"]*#\//, 'site must not use hash routing');
 assert.match(
   rootHtml,
   /https:\/\/satouriko\.github\.io\/music-ai-lab\/music-ai-roadmap-og\.png/,
@@ -88,9 +90,9 @@ assert.doesNotMatch(
 
 const outputFiles = await collectFiles(clientRoot);
 assert.equal(
-  outputFiles.some((file) => file.endsWith('.rsc')),
-  false,
-  'RSC files cannot be routed correctly by GitHub Pages',
+  outputFiles.some((file) => file.endsWith('.txt')),
+  true,
+  'static navigation payloads are missing from the Pages artifact',
 );
 
 function requestFile(pathname) {

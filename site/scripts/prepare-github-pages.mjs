@@ -11,8 +11,6 @@ async function prepareFiles(directory) {
     const absolutePath = join(directory, entry.name);
     if (entry.isDirectory()) {
       await prepareFiles(absolutePath);
-    } else if (entry.isFile() && extname(entry.name) === '.rsc') {
-      await rm(absolutePath);
     } else if (
       entry.isFile()
       && extname(entry.name) === '.html'
@@ -28,10 +26,13 @@ async function prepareFiles(directory) {
 
 await prepareFiles(clientRoot);
 if (basePath) {
-  await rename(
-    join(clientRoot, basePath, '_next'),
-    join(clientRoot, '_next'),
-  );
+  const basePathRoot = join(clientRoot, basePath);
+  for (const entry of await readdir(basePathRoot, { withFileTypes: true })) {
+    await rename(
+      join(basePathRoot, entry.name),
+      join(clientRoot, entry.name),
+    );
+  }
   await rm(join(clientRoot, basePath), { recursive: true });
 }
 await Promise.all([

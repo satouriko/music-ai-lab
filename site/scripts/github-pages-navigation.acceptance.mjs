@@ -105,14 +105,25 @@ async function run() {
     throw new Error(message);
   }
 
-  async function verifyDocumentNavigation({ from, href, pageSelector }) {
+  async function waitForHydratedLink(href) {
+    await waitFor(
+      `(() => {
+        const link = document.querySelector(${JSON.stringify(`a[href="${href}"]`)});
+        return Boolean(link && Object.keys(link).some((key) => key.startsWith('__reactProps$')));
+      })()`,
+      `link ${href} did not hydrate`,
+    );
+  }
+
+  async function verifySpaNavigation({ from, href, pageSelector }) {
     await call('Page.navigate', { url: new URL(from, baseUrl).href });
     await waitFor(
       `document.readyState === 'complete' && Boolean(document.querySelector(${JSON.stringify(`a[href="${href}"]`)}))`,
       `link ${href} did not render`,
     );
+    await waitForHydratedLink(href);
 
-    const marker = `document-${Date.now()}-${href}`;
+    const marker = `spa-${Date.now()}-${href}`;
     await evaluate(`window.__MUSIC_AI_DOCUMENT_MARKER__ = ${JSON.stringify(marker)}`);
     await evaluate(`document.querySelector(${JSON.stringify(`a[href="${href}"]`)}).click()`);
     await waitFor(
@@ -121,8 +132,8 @@ async function run() {
     );
     assert.equal(
       await evaluate('window.__MUSIC_AI_DOCUMENT_MARKER__'),
-      undefined,
-      `${href} attempted RSC navigation instead of loading its static HTML document`,
+      marker,
+      `${href} replaced the document instead of using SPA navigation`,
     );
   }
 
@@ -130,19 +141,19 @@ async function run() {
   await call('Runtime.enable');
   await call('Network.enable');
 
-  await verifyDocumentNavigation({
+  await verifySpaNavigation({
     from: '',
-    href: '/music-ai-lab/artifacts/weekly-2026-w34/',
+    href: '/music-ai-lab/artifacts/weekly-2026-w34',
     pageSelector: '.artifact-page',
   });
-  await verifyDocumentNavigation({
+  await verifySpaNavigation({
     from: '',
-    href: '/music-ai-lab/artifacts/environment-check/',
+    href: '/music-ai-lab/artifacts/environment-check',
     pageSelector: '.artifact-page',
   });
-  await verifyDocumentNavigation({
+  await verifySpaNavigation({
     from: 'artifacts/environment-check/',
-    href: '/music-ai-lab/code/learning/00-environment/test_environment_check.py/',
+    href: '/music-ai-lab/code/learning/00-environment/test_environment_check.py',
     pageSelector: '.artifact-file-index',
   });
 
@@ -159,14 +170,14 @@ async function run() {
     `browser requests failed:\n${JSON.stringify(responses, null, 2)}`,
   );
   assert.equal(
-    requests.some(({ headers, url }) => (
-      new URL(url).searchParams.has('_rsc')
-      || Object.entries(headers).some(([name, value]) => (
-        name.toLowerCase() === 'rsc' && String(value) === '1'
-      ))
-    )),
+    requests.some(({ url }) => new URL(url).searchParams.has('_rsc')),
     false,
-    `GitHub Pages navigation attempted unsupported RSC requests:\n${JSON.stringify(requests, null, 2)}`,
+    `GitHub Pages navigation sent an unsupported query-based RSC request:\n${JSON.stringify(requests, null, 2)}`,
+  );
+  assert.equal(
+    requests.some(({ url }) => new URL(url).pathname.endsWith('.txt')),
+    true,
+    `GitHub Pages navigation did not load a static navigation payload:\n${JSON.stringify(requests, null, 2)}`,
   );
 
   socket.close();

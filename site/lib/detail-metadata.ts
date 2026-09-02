@@ -23,7 +23,7 @@ export function detailMetadata({
   return {
     title: `${title} · Music AI Lab`,
     description,
-    alternates: { canonical },
+    alternates: { canonical: withSiteBasePath(canonical) },
     openGraph: {
       title,
       description,

@@ -7,11 +7,11 @@ function isStableRepositoryPath(path: string) {
   return path.split('/').every((segment) => segment !== '' && segment !== '.' && segment !== '..');
 }
 
-export function artifactHref(id: string, basePath?: string) {
+export function artifactHref(id: string, basePath = '') {
   return withSiteBasePath(`/artifacts/${encodeURIComponent(id)}/`, basePath);
 }
 
-export function artifactFileHref(path: string, basePath?: string) {
+export function artifactFileHref(path: string, basePath = '') {
   const encodedPath = path
     .split('/')
     .map((segment) => encodeURIComponent(segment))
@@ -19,7 +19,7 @@ export function artifactFileHref(path: string, basePath?: string) {
   return withSiteBasePath(`/code/${encodedPath}/`, basePath);
 }
 
-export function roadmapWeekHref(week: number, basePath?: string) {
+export function roadmapWeekHref(week: number, basePath = '') {
   return withSiteBasePath(`/#week-${week}`, basePath);
 }
 

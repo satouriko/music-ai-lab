@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import type { Artifact } from '@/lib/artifact-types';
 import { artifactHref } from '@/lib/artifacts';
 import { groupArtifactsForWeek } from '@/lib/roadmap-artifacts';
@@ -36,7 +38,7 @@ export function RoadmapArtifacts({
             <h5>{groupLabels[kind]}</h5>
             <div>
               {items.map((artifact) => (
-                <a href={artifactHref(artifact.id)} key={artifact.id}>
+                <Link href={artifactHref(artifact.id)} key={artifact.id}>
                   <span className="artifact-link-copy">
                     <strong>{artifact.title}</strong>
                     <code>
@@ -45,7 +47,7 @@ export function RoadmapArtifacts({
                   </span>
                   <span>{artifact.summary}</span>
                   <b aria-hidden="true">↗</b>
-                </a>
+                </Link>
               ))}
             </div>
           </section>
