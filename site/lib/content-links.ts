@@ -1,6 +1,7 @@
 import { posix } from 'node:path';
 
 import type { ContentKind } from './content-types';
+import { withSiteBasePath } from './site-path';
 
 const routeByKind: Record<ContentKind, string> = {
   note: 'notes',
@@ -8,12 +9,16 @@ const routeByKind: Record<ContentKind, string> = {
   notebook: 'notebooks',
 };
 
-export function contentHref(kind: ContentKind, repositoryPath: string) {
+export function contentHref(
+  kind: ContentKind,
+  repositoryPath: string,
+  basePath?: string,
+) {
   const encodedPath = repositoryPath
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/');
-  return `/${routeByKind[kind]}/${encodedPath}`;
+  return withSiteBasePath(`/${routeByKind[kind]}/${encodedPath}/`, basePath);
 }
 
 export function resolveRepositoryLink(

@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import { CodeViewer } from '@/components/code-viewer';
 import type { CodeArtifact as CodeArtifactData } from '@/lib/artifact-types';
 import type { ArtifactPresentation } from '@/lib/artifact-presentation';
@@ -36,11 +34,11 @@ export function CodeArtifact({
               {document.path === selected.document.path ? (
                 <strong>{document.title}</strong>
               ) : (
-                <Link
+                <a
                   href={artifactFileHref(document.path)}
                 >
                   {document.title}
-                </Link>
+                </a>
               )}
             </li>
           ))}

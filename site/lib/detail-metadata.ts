@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 
+import { withSiteBasePath } from '@/lib/site-path';
+
 const socialImage = {
-  url: '/music-ai-roadmap-og.png',
+  url: withSiteBasePath('/music-ai-roadmap-og.png'),
   width: 1200,
   height: 630,
   alt: '音乐 AI 52 周学习路线',

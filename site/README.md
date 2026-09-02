@@ -34,7 +34,7 @@
 
 开发与构建开始前，`scripts/build-content.mjs` 会扫描白名单目录，校验路线和产物关系，
 再生成被 Git 忽略的 `.generated/content.json`。它只是可重建的构建缓存，不是内容的
-权威来源。部署后的 Worker 不读取本地文件系统，也不会执行 Python 或 Notebook。
+权威来源。GitHub Pages 只分发构建生成的静态文件，不会执行 Python 或 Notebook。
 
 技术栈为 Next.js 16、React 19、TypeScript、Vinext/Vite、React Markdown、
 remark-gfm、remark-math、KaTeX 与 Shiki JavaScript 正则引擎。Node.js 版本要求为
@@ -60,7 +60,8 @@ npm test
 npm run validate:data
 npm run typecheck
 npm run lint
-npm run build
+npm run build:pages
+npm run test:pages
 ```
 
 | 命令 | 作用 |
@@ -69,12 +70,14 @@ npm run build
 | `npm run validate:data` | 检查 52 周路线和关联产物的结构、完整性与所有权 |
 | `npm run typecheck` | 生成内容后运行 TypeScript 静态检查 |
 | `npm run lint` | 生成内容后检查网页源码规范 |
-| `npm run build` | 生成内容并构建生产包 |
+| `npm run build:pages` | 生成内容，构建并整理 GitHub Pages 静态产物 |
+| `npm run test:pages` | 验收目录式路由、项目子路径、元数据与真实浏览器导航 |
 
 ## 部署
 
-站点保留 OpenAI Sites 托管配置，但发布是独立操作。只有在完整校验通过并得到明确
-授权后才执行；本地预览不上传任何内容。
+`main` 分支更新后，GitHub Actions 会完成完整校验并将静态导出发布到
+<https://satouriko.github.io/music-ai-lab/>。GitHub Pages 使用 `/music-ai-lab`
+项目子路径；`npm run build:pages` 和 `npm run test:pages` 分别生成并验收同样的产物。
 
 以下内容都不提交 Git：
 
@@ -84,5 +87,4 @@ node_modules/
 dist/
 .next/
 .vinext/
-.wrangler/
 ```

@@ -1,7 +1,6 @@
-import Link from 'next/link';
-
 import type { Artifact } from '@/lib/artifact-types';
 import { artifactHref, roadmapWeekHref } from '@/lib/artifacts';
+import { withSiteBasePath } from '@/lib/site-path';
 
 export function ArtifactContext({
   artifact,
@@ -14,13 +13,13 @@ export function ArtifactContext({
 }) {
   return (
     <nav className="artifact-context" aria-label="学习产物所属路线">
-      <Link href="/#roadmap">Roadmap</Link>
+      <a href={withSiteBasePath('/#roadmap')}>Roadmap</a>
       <span aria-hidden="true">/</span>
       <div>
         {artifact.weeks.map((week) => (
-          <Link href={roadmapWeekHref(week)} key={week}>
+          <a href={roadmapWeekHref(week)} key={week}>
             W{String(week).padStart(2, '0')}
-          </Link>
+          </a>
         ))}
       </div>
       {showArtifactLink && (
@@ -29,7 +28,7 @@ export function ArtifactContext({
           {artifactIsCurrent ? (
             <span>{artifact.title}</span>
           ) : (
-            <Link href={artifactHref(artifact.id)}>{artifact.title}</Link>
+            <a href={artifactHref(artifact.id)}>{artifact.title}</a>
           )}
         </>
       )}

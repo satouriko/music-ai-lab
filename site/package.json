@@ -1,5 +1,5 @@
 {
-  "name": "sites-project",
+  "name": "music-ai-lab-site",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -8,10 +8,10 @@
   "scripts": {
     "generate:content": "node scripts/build-content.mjs",
     "test": "npm run generate:content && node --import tsx --test lib/*.test.ts scripts/*.test.mjs",
-    "test:spa": "node scripts/spa-navigation.acceptance.mjs",
-    "test:static": "node scripts/static-export.acceptance.mjs && node scripts/worker-spa.acceptance.mjs",
+    "test:pages": "node scripts/github-pages-export.acceptance.mjs",
     "dev": "npm run generate:content && vinext dev",
-    "build": "npm run generate:content && vinext build && node scripts/prepare-sites-assets.mjs",
+    "build": "npm run generate:content && vinext build",
+    "build:pages": "NEXT_PUBLIC_BASE_PATH=/music-ai-lab npm run build && NEXT_PUBLIC_BASE_PATH=/music-ai-lab node scripts/prepare-github-pages.mjs",
     "start": "vinext start",
     "lint": "npm run generate:content && eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "npm run generate:content && tsc --noEmit",
@@ -29,9 +29,6 @@
     "shiki": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.37.1",
-    "@cloudflare/workers-types": "4.20260515.1",
-    "@openai/sites-vite-plugin": "^0.1.0 || ^0.2.0",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
@@ -45,8 +42,7 @@
     "tsx": "^4.23.12",
     "typescript": "5.9.3",
     "vinext": "1.0.0-beta.8",
-    "vite": "8.0.13",
-    "wrangler": "4.92.0"
+    "vite": "8.0.13"
   },
   "type": "module"
 }

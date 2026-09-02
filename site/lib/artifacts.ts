@@ -1,25 +1,26 @@
 import type { Artifact } from './artifact-types';
 import { content } from './content';
+import { withSiteBasePath } from './site-path';
 
 function isStableRepositoryPath(path: string) {
   if (!path || path.startsWith('/') || path.includes('\\')) return false;
   return path.split('/').every((segment) => segment !== '' && segment !== '.' && segment !== '..');
 }
 
-export function artifactHref(id: string) {
-  return `/artifacts/${encodeURIComponent(id)}`;
+export function artifactHref(id: string, basePath?: string) {
+  return withSiteBasePath(`/artifacts/${encodeURIComponent(id)}/`, basePath);
 }
 
-export function artifactFileHref(path: string) {
+export function artifactFileHref(path: string, basePath?: string) {
   const encodedPath = path
     .split('/')
     .map((segment) => encodeURIComponent(segment))
     .join('/');
-  return `/code/${encodedPath}`;
+  return withSiteBasePath(`/code/${encodedPath}/`, basePath);
 }
 
-export function roadmapWeekHref(week: number) {
-  return `/#week-${week}`;
+export function roadmapWeekHref(week: number, basePath?: string) {
+  return withSiteBasePath(`/#week-${week}`, basePath);
 }
 
 export function artifactsForWeekFrom(

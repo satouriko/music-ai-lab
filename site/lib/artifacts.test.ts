@@ -67,10 +67,22 @@ test('artifactForContentPathFrom finds exact note and code ownership', () => {
 });
 
 test('artifact and roadmap links use stable encoded routes', () => {
-  assert.equal(artifactHref('weekly note'), '/artifacts/weekly%20note');
+  assert.equal(artifactHref('weekly note'), '/artifacts/weekly%20note/');
   assert.equal(
     artifactFileHref('learning/environment/test_main.py'),
-    '/code/learning/environment/test_main.py',
+    '/code/learning/environment/test_main.py/',
   );
   assert.equal(roadmapWeekHref(4), '/#week-4');
+});
+
+test('artifact and roadmap links include the GitHub Pages base path', () => {
+  assert.equal(
+    artifactHref('weekly note', '/music-ai-lab'),
+    '/music-ai-lab/artifacts/weekly%20note/',
+  );
+  assert.equal(
+    artifactFileHref('learning/environment/test_main.py', '/music-ai-lab'),
+    '/music-ai-lab/code/learning/environment/test_main.py/',
+  );
+  assert.equal(roadmapWeekHref(4, '/music-ai-lab'), '/music-ai-lab/#week-4');
 });

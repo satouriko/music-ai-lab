@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import {
   Children,
   isValidElement,
@@ -120,7 +119,7 @@ export async function MarkdownContent({
               );
             }
             if (resolved.startsWith('/')) {
-              return <Link href={resolved}>{children}</Link>;
+              return <a href={resolved}>{children}</a>;
             }
             if (/^https?:/i.test(resolved)) {
               return (

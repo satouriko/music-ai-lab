@@ -13,7 +13,11 @@ const knownPaths = new Map<string, ContentKind>([
 test('contentHref preserves and encodes every repository path segment', () => {
   assert.equal(
     contentHref('code', 'learning/a b/train.py'),
-    '/code/learning/a%20b/train.py',
+    '/code/learning/a%20b/train.py/',
+  );
+  assert.equal(
+    contentHref('code', 'learning/a b/train.py', '/music-ai-lab'),
+    '/music-ai-lab/code/learning/a%20b/train.py/',
   );
 });
 
@@ -24,7 +28,7 @@ test('resolveRepositoryLink maps known repository-relative content', () => {
       '../../learning/00-environment/environment_check.py#main',
       knownPaths,
     ),
-    '/code/learning/00-environment/environment_check.py#main',
+    '/code/learning/00-environment/environment_check.py/#main',
   );
 });
 

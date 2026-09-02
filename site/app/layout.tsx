@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
+import { withSiteBasePath } from '@/lib/site-path';
 import 'katex/dist/katex.min.css';
 import './globals.css';
 
@@ -11,12 +12,13 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://satouriko.github.io'),
   title: 'Music AI Lab',
   description: '浏览音乐 AI 学习路线、笔记、练习代码和实验 Notebook。',
   openGraph: {
     title: 'Music AI Lab',
     description: '音乐 AI 学习路线、笔记、练习代码和实验 Notebook。',
-    images: [{ url: '/music-ai-roadmap-og.png', width: 1200, height: 630, alt: '音乐 AI 52 周学习路线' }],
+    images: [{ url: withSiteBasePath('/music-ai-roadmap-og.png'), width: 1200, height: 630, alt: '音乐 AI 52 周学习路线' }],
     locale: 'zh_CN',
     type: 'website',
   },
@@ -24,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Music AI Lab',
     description: '音乐 AI 学习路线、笔记、练习代码和实验 Notebook。',
-    images: ['/music-ai-roadmap-og.png'],
+    images: [withSiteBasePath('/music-ai-roadmap-og.png')],
   },
 };
 
